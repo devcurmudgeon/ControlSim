@@ -64,7 +64,7 @@
 		$( "#teamsize" ).val( $( "#teamsize_id" ).slider( "value" ) );
 	});
 
-	var framerate = 20;
+	var frametime = 50;
 	var day = 0;
 	var spec = 0;
 	var work = 0;
@@ -75,7 +75,7 @@
 	var ctx;
 	var project_length;
 	var index = 0;
-	var scale = 3;
+	var scale = 5;
 
 	function simulation(day){
 		error = uncertainty.value * (gap/2 - Math.random(gap));
@@ -85,7 +85,8 @@
 		if (day % sprint.value == 0 ){
 			spec = spec - Math.random() * sprint.value;
 		}
-		workdone = teamsize.value * gap_array[day] / sprint.value;
+		workdone = 2 * teamsize.value * gap_array[day] / sprint.value;
+		if (day % 6 == 0 || day % 7 == 0) workdone = 0; // weekends :-)
 		work = work + workdone;
 	}
 
@@ -96,18 +97,12 @@
 		simulation(day);
 
 		ctx.beginPath();
-		ctx.strokeStyle = "#990000";
-		ctx.lineWidth = 5;
-		ctx.moveTo(day,spec);
-		ctx.lineTo(day+1,spec);
-		ctx.stroke();
+		ctx.fillStyle = "red";
+		ctx.arc(day*scale, spec, 2, 0 , Math.PI*2);ctx.fill();
 		ctx.closePath();
 		ctx.beginPath();
-		ctx.lineWidth = 3;
-		ctx.strokeStyle = "#00FF00"; 
-		ctx.moveTo(day,work);
-		ctx.lineTo(day+1,work);
-		ctx.stroke();
+		ctx.fillStyle = "darkgreen";
+		ctx.arc(day*scale, work, 2, 0 , Math.PI*2);ctx.fill();
 		ctx.closePath();
 		
 	}
@@ -118,8 +113,8 @@
 		ctx = document.getElementById("myCanvas").getContext("2d");
 		ctx.clearRect(0,0,1000,500);
 		project_length = sprint.value * iterations.value;
-		var timer = setInterval(animate, framerate);
-		setTimeout(function(){clearInterval(timer)}, framerate * project_length);
+		var timer = setInterval(animate, frametime);
+		setTimeout(function(){clearInterval(timer)}, frametime * project_length);
 	}
 	</script>
 </head>
