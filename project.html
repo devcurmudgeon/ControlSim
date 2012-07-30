@@ -77,10 +77,8 @@
 	var index = 0;
 	var scale = 3;
 
-	function animate(){
-		day = day + 1;
-		$('#day').val(day);
-		error = uncertainty.value / 100 * (gap/2 - Math.random(gap));
+	function simulation(day){
+		error = uncertainty.value * (gap/2 - Math.random(gap));
 		gap = spec - work;
 		index = parseInt(lag.value) + day;
 		gap_array[index] = gap + error;
@@ -89,6 +87,14 @@
 		}
 		workdone = teamsize.value * gap_array[day] / sprint.value;
 		work = work + workdone;
+	}
+
+	function animate(){
+		day = day + 1;
+		$('#day').val(day);
+
+		simulation(day);
+
 		ctx.beginPath();
 		ctx.strokeStyle = "#990000";
 		ctx.lineWidth = 5;
