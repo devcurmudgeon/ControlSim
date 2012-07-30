@@ -57,6 +57,7 @@
 			min: 1,
 			max: 100,
 			step: 1,
+			value: 7,
 			slide: function( event, ui ) {
 				$( "#teamsize" ).val( ui.value );
 			}
@@ -83,9 +84,9 @@
 		index = parseInt(lag.value) + day;
 		gap_array[index] = gap + error;
 		if (day % sprint.value == 0 ){
-			spec = spec - Math.random() * sprint.value;
+			spec = spec - Math.random() * sprint.value * 5;
 		}
-		workdone = 2 * teamsize.value * gap_array[day] / sprint.value;
+		workdone = 0.4 * teamsize.value * gap_array[day] / sprint.value;
 		if (day % 6 == 0 || day % 7 == 0) workdone = 0; // weekends :-)
 		work = work + workdone;
 	}
