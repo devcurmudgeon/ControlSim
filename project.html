@@ -66,8 +66,8 @@
 
 	var framerate = 20;
 	var day = 0;
-	var spec = 450;
-	var work = 500;
+	var spec = 0;
+	var work = 0;
 	var gap_array = []; for (var i=0; i < 600; i++) gap_array[i] = 0;
 	var gap = 0;
 	var error = 0;
@@ -75,6 +75,7 @@
 	var ctx;
 	var project_length;
 	var index = 0;
+	var scale = 3;
 
 	function animate(){
 		day = day + 1;
@@ -87,20 +88,27 @@
 			spec = spec - Math.random() * sprint.value;
 		}
 		workdone = teamsize.value * gap_array[day] / sprint.value;
-		$('#day').val(workdone);
 		work = work + workdone;
-		ctx.strokeStyle = "#000000"; 
+		ctx.beginPath();
+		ctx.strokeStyle = "#990000";
+		ctx.lineWidth = 5;
 		ctx.moveTo(day,spec);
 		ctx.lineTo(day+1,spec);
 		ctx.stroke();
+		ctx.closePath();
+		ctx.beginPath();
+		ctx.lineWidth = 3;
 		ctx.strokeStyle = "#00FF00"; 
 		ctx.moveTo(day,work);
 		ctx.lineTo(day+1,work);
 		ctx.stroke();
+		ctx.closePath();
+		
 	}
 
 
 	function go() {
+		day = 0; spec = 450; work = 500;
 		ctx = document.getElementById("myCanvas").getContext("2d");
 		ctx.clearRect(0,0,1000,500);
 		project_length = sprint.value * iterations.value;
