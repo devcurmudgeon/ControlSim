@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>untitled</title>
+	<link type="text/css" href="css/le-frog/jquery-ui-1.8.22.custom.css" rel="stylesheet" />
+	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.22.custom.min.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		// Sliders
+		$('#sprint_id').slider({
+            orientation: "vertical",
+			min: 7,
+			max: 180,
+			step: 7,
+			slide: function( event, ui ) {
+				$( "#sprint" ).val( ui.value );
+			}
+		});
+		$( "#sprint" ).val( $( "#sprint_id" ).slider( "value" ) );
+		$('#iterations_id').slider({
+            orientation: "vertical",
+			min: 1,
+			max: 20,
+			step: 1,
+			value: 5,
+			slide: function( event, ui ) {
+				$( "#iterations" ).val( ui.value );
+			}			
+		});
+		$( "#iterations" ).val( $( "#iterations_id" ).slider( "value" ) );
+		$('#uncertainty_id').slider({
+            orientation: "vertical",
+			min: 0,
+			max: 3,
+			step: 0.1,
+			slide: function( event, ui ) {
+				$( "#uncertainty" ).val( ui.value );
+			}
+		});
+		$( "#uncertainty" ).val( $( "#uncertainty_id" ).slider( "value" ) );
+		$('#lag_id').slider({
+            orientation: "vertical",
+			min: 0,
+			max: 180,
+			step: 1,
+			slide: function( event, ui ) {
+				$( "#lag" ).val( ui.value );
+			}
+		});
+		$( "#lag" ).val( $( "#lag_id" ).slider( "value" ) );
+		$('#teamsize_id').slider({
+            orientation: "vertical",
+			min: 1,
+			max: 100,
+			step: 1,
+			slide: function( event, ui ) {
+				$( "#teamsize" ).val( ui.value );
+			}
+		});
+		$( "#teamsize" ).val( $( "#teamsize_id" ).slider( "value" ) );
+	});
+	
+	var framerate = 20;
+	var day = 0;
+    var spec = 450;
+    var work = 500;
+	var gap_array = []; for (i=0; i < 600; i++){gap_array[i] = 0};
+    var gap = spec - work;
+    var workdone = 0;
+	var ctx;
+	var project_length;
+	
+	function animate(){
+		day = day + 1;
+		$('#day').val(day);
+        var error = uncertainty.value / 100 * (gap/2 - Math.random(gap))
+        gap_array[day + lag] = gap + error;
+        if (day % sprint.value == 0 ){
+	        spec = spec - Math.random() * sprint.value;		
+        }
+        workdone = teamsize.value * gap_array[day] / sprint.value;
+	    work = work + workdone;
+        ctx.strokeStyle = "#000000"; 
+        ctx.moveTo(day,spec);
+        ctx.lineTo(day+1,spec);
+        ctx.stroke();
+        ctx.strokeStyle = "#00FF00"; 
+        ctx.moveTo(day,work);
+        ctx.lineTo(day+1,work);
+        ctx.stroke();
+	}
+  
+ 
+	function go() {
+		ctx = document.getElementById("myCanvas").getContext("2d");
+		ctx.clearRect(0,0,1000,500);
+		project_length = sprint.value * iterations.value;
+		var timer = setInterval(animate, framerate);
+		setTimeout(function(){clearInterval(timer)}, framerate * project_length);
+	}
+	</script>
+</head>
+<body>
+	<canvas id="myCanvas" width="1000" height="500" style="border:1px solid #c3c3c3;">
+	</canvas>
+	
+    <button onclick="go()">Run</button>
+	<p>
+		<label for="day_lbl">Day:</label>
+		<input type="text" id="day" style="border:0; color:#f6931f; font-weight:bold;" />
+	</p>
+    <table><tr>
+	<td>
+		<label for="sprint_lbl">Sprint:</label>
+		<input type="text" id="sprint" style="border:0; color:#f6931f; font-weight:bold;" />
+	    <div id="sprint_id"></div>
+    </td>
+	<td>
+		<label for="iter_lbl">Iterations:</label>
+		<input type="text" id="iterations" style="border:0; color:#f6931f; font-weight:bold;" />
+		<div id="iterations_id"></div>
+    </td>
+	<td>
+		<label for="unc_lbl">Uncertainty:</label>
+		<input type="text" id="uncertainty" style="border:0; color:#f6931f; font-weight:bold;" />
+		<div id="uncertainty_id"></div>
+    </td>
+	<td>
+		<label for="lag_lbl">Lag:</label>
+		<input type="text" id="lag" style="border:0; color:#f6931f; font-weight:bold;" />
+		<div id="lag_id"></div>
+    </td>
+	<td>
+		<label for="teamsize_lbl">Teamsize:</label>
+		<input type="text" id="teamsize" style="border:0; color:#f6931f; font-weight:bold;" />
+		<div id="teamsize_id"></div>
+    </td>
+	</tr>
+	</table>
+
+</body>
+</html>
