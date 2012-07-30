@@ -16,6 +16,7 @@
 			min: 7,
 			max: 180,
 			step: 7,
+			value: 28,
 			slide: function( event, ui ) {
 				$( "#sprint" ).val( ui.value );
 			}
@@ -26,7 +27,7 @@
 			min: 1,
 			max: 20,
 			step: 1,
-			value: 5,
+			value: 1,
 			slide: function( event, ui ) {
 				$( "#iterations" ).val( ui.value );
 			}
@@ -35,8 +36,8 @@
 		$('#uncertainty_id').slider({
 			orientation: "vertical",
 			min: 0,
-			max: 3,
-			step: 0.1,
+			max: 100,
+			step: 5,
 			slide: function( event, ui ) {
 				$( "#uncertainty" ).val( ui.value );
 			}
@@ -45,7 +46,7 @@
 		$('#lag_id').slider({
 			orientation: "vertical",
 			min: 0,
-			max: 180,
+			max: 100,
 			step: 1,
 			slide: function( event, ui ) {
 				$( "#lag" ).val( ui.value );
@@ -77,9 +78,10 @@
 	var project_length;
 	var index = 0;
 	var scale = 5;
+	var spare = 0;
 
 	function simulation(day){
-		error = uncertainty.value * (gap/2 - Math.random(gap));
+		error = uncertainty.value * (Math.random() - 0.5) * sprint.value / 100;
 		gap = spec - work;
 		index = parseInt(lag.value) + day;
 		gap_array[index] = gap + error;
@@ -87,12 +89,12 @@
 			spec = spec - Math.random() * sprint.value * 5;
 		}
 		workdone = 0.4 * teamsize.value * gap_array[day] / sprint.value;
+		spare =  teamsize.value - workdone;
 		if (day % 6 == 0 || day % 7 == 0) workdone = 0; // weekends :-)
 		work = work + workdone;
 	}
 
 	function animate(){
-		day = day + 1;
 		$('#day').val(day);
 
 		simulation(day);
@@ -105,12 +107,16 @@
 		ctx.fillStyle = "darkgreen";
 		ctx.arc(day*scale, work, 2, 0 , Math.PI*2);ctx.fill();
 		ctx.closePath();
-		
+		ctx.beginPath();
+		ctx.fillStyle = "grey";
+		ctx.arc(day*scale, spare, 2, 0 , Math.PI*2);ctx.fill();
+		ctx.closePath();
+		day = day + 1;
 	}
 
 
 	function go() {
-		day = 0; spec = 450; work = 500;
+		day = 0; spec = 500; work = 500;
 		ctx = document.getElementById("myCanvas").getContext("2d");
 		ctx.clearRect(0,0,1000,500);
 		project_length = sprint.value * iterations.value;
